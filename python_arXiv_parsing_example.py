@@ -45,6 +45,9 @@ feedparser._FeedParserMixin.namespaces['http://arxiv.org/schemas/atom'] = 'arxiv
 # perform a GET request using the base_url and query
 response = urllib.urlopen(base_url+query).read()
 
+# change author -> contributors (because contributors is a list)
+response = response.replace('author','contributor')
+
 # parse the response using feedparser
 feed = feedparser.parse(response)
 
@@ -64,19 +67,7 @@ for entry in feed.entries:
     print 'Published: %s' % entry.published
     print 'Title:  %s' % entry.title
     
-    # feedparser v4.1 only grabs the first author
-    author_string = entry.author
-    
-    # grab the affiliation in <arxiv:affiliation> if present
-    # - this will only grab the first affiliation encountered
-    #   (the first affiliation for the first author)
-    # Please email the list with a way to get all of this information!
-    try:
-        author_string += ' (%s)' % entry.arxiv_affiliation
-    except AttributeError:
-        pass
-    
-    print 'First Author:  %s' % author_string
+    print 'Authors:  %s' % ','.join(author.name for author in entry.contributors)
     
     # get the links to the abs page and pdf for this e-print
     for link in entry.links:
