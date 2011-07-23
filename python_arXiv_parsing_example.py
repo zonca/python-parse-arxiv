@@ -14,6 +14,7 @@ urllib is included in the standard python library.
 feedparser can be downloaded from http://feedparser.org/ .
 
 Author: Julius B. Lucks
+Contributor: Andrea Zonca (andreazonca.com)
 
 This is free software.  Feel free to do what you want
 with it, but please play nice with the arXiv API!
