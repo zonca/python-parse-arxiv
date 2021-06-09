@@ -47,7 +47,7 @@ feedparser._FeedParserMixin.namespaces["http://arxiv.org/schemas/atom"] = "arxiv
 response = urllib.request.urlopen(base_url + query).read()
 
 # change author -> contributors (because contributors is a list)
-response = response.replace("author", "contributor")
+response = response.replace(b"author", b"contributor")
 
 # parse the response using feedparser
 feed = feedparser.parse(response)
