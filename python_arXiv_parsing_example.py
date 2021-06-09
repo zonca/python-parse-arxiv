@@ -20,7 +20,7 @@ This is free software.  Feel free to do what you want
 with it, but please play nice with the arXiv API!
 """
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import feedparser
 
 # Base api query url
@@ -44,7 +44,7 @@ feedparser._FeedParserMixin.namespaces['http://a9.com/-/spec/opensearch/1.1/'] =
 feedparser._FeedParserMixin.namespaces['http://arxiv.org/schemas/atom'] = 'arxiv'
 
 # perform a GET request using the base_url and query
-response = urllib.urlopen(base_url+query).read()
+response = urllib.request.urlopen(base_url+query).read()
 
 # change author -> contributors (because contributors is a list)
 response = response.replace('author','contributor')
@@ -53,29 +53,29 @@ response = response.replace('author','contributor')
 feed = feedparser.parse(response)
 
 # print out feed information
-print 'Feed title: %s' % feed.feed.title
-print 'Feed last updated: %s' % feed.feed.updated
+print('Feed title: %s' % feed.feed.title)
+print('Feed last updated: %s' % feed.feed.updated)
 
 # print opensearch metadata
-print 'totalResults for this query: %s' % feed.feed.opensearch_totalresults
-print 'itemsPerPage for this query: %s' % feed.feed.opensearch_itemsperpage
-print 'startIndex for this query: %s'   % feed.feed.opensearch_startindex
+print('totalResults for this query: %s' % feed.feed.opensearch_totalresults)
+print('itemsPerPage for this query: %s' % feed.feed.opensearch_itemsperpage)
+print('startIndex for this query: %s'   % feed.feed.opensearch_startindex)
 
 # Run through each entry, and print out information
 for entry in feed.entries:
-    print 'e-print metadata'
-    print 'arxiv-id: %s' % entry.id.split('/abs/')[-1]
-    print 'Published: %s' % entry.published
-    print 'Title:  %s' % entry.title
+    print('e-print metadata')
+    print('arxiv-id: %s' % entry.id.split('/abs/')[-1])
+    print('Published: %s' % entry.published)
+    print('Title:  %s' % entry.title)
     
-    print 'Authors:  %s' % ','.join(author.name for author in entry.contributors)
+    print('Authors:  %s' % ','.join(author.name for author in entry.contributors))
     
     # get the links to the abs page and pdf for this e-print
     for link in entry.links:
         if link.rel == 'alternate':
-            print 'abs page link: %s' % link.href
+            print('abs page link: %s' % link.href)
         elif link.title == 'pdf':
-            print 'pdf link: %s' % link.href
+            print('pdf link: %s' % link.href)
     
     # The journal reference, comments and primary_category sections live under 
     # the arxiv namespace
@@ -83,13 +83,13 @@ for entry in feed.entries:
         journal_ref = entry.arxiv_journal_ref
     except AttributeError:
         journal_ref = 'No journal ref found'
-    print 'Journal reference: %s' % journal_ref
+    print('Journal reference: %s' % journal_ref)
     
     try:
         comment = entry.arxiv_comment
     except AttributeError:
         comment = 'No comment found'
-    print 'Comments: %s' % comment
+    print('Comments: %s' % comment)
     
     # Since the <arxiv:primary_category> element has no data, only
     # attributes, feedparser does not store anything inside
@@ -97,11 +97,11 @@ for entry in feed.entries:
     # This is a dirty hack to get the primary_category, just take the
     # first element in entry.tags.  If anyone knows a better way to do
     # this, please email the list!
-    print 'Primary Category: %s' % entry.tags[0]['term']
+    print('Primary Category: %s' % entry.tags[0]['term'])
     
     # Lets get all the categories
     all_categories = [t['term'] for t in entry.tags]
-    print 'All Categories: %s' % (', ').join(all_categories)
+    print('All Categories: %s' % (', ').join(all_categories))
     
     # The abstract is in the <summary> element
-    print 'Abstract: %s' %  entry.summary
+    print('Abstract: %s' %  entry.summary)
