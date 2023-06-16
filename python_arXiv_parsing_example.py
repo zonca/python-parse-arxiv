@@ -22,6 +22,7 @@ with it, but please play nice with the arXiv API!
 
 import urllib.request, urllib.parse, urllib.error
 import feedparser
+from feedparser.mixin import _FeedParserMixin
 
 # Base api query url
 base_url = "http://export.arxiv.org/api/query?"
@@ -38,10 +39,8 @@ query = "search_query=%s&start=%i&max_results=%i" % (search_query, start, max_re
 # Some entry metadata lives in the arXiv namespace.
 # This is a hack to expose both of these namespaces in
 # feedparser v4.1
-feedparser._FeedParserMixin.namespaces[
-    "http://a9.com/-/spec/opensearch/1.1/"
-] = "opensearch"
-feedparser._FeedParserMixin.namespaces["http://arxiv.org/schemas/atom"] = "arxiv"
+_FeedParserMixin.namespaces["http://a9.com/-/spec/opensearch/1.1/"] = "opensearch"
+_FeedParserMixin.namespaces["http://arxiv.org/schemas/atom"] = "arxiv"
 
 # perform a GET request using the base_url and query
 response = urllib.request.urlopen(base_url + query).read()
